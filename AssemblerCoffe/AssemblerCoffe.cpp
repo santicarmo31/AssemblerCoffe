@@ -35,18 +35,17 @@ const float NUMERO_17 = 17.00;
 const float NUMERO_18 = 18.00;
 const float NUMERO_19 = 19.00;
 const float NUMERO_20 = 20.00;
-
 const float PESOS_EN_UVTs = 28279.00;
 const float LIMPIAR_REGISTROS = 0.0;
+const float UVTS_95 = 95.00;
+const float UVTS_150 = 150.00;
+const float UVTS_360 = 360.00;
+const float PORCENTAJE_UVTS19 = 0.19;
+const float PORCENTAJE_UVTS28 = 0.28;
+const float PORCENTAJE_UVTS33 = 0.33;
 
-//const int SUMATORIA_SALARIOS;
-//const int SUMATORIA_SALUD_EMPLEADOS;
-//const int SUMATORIA_PENSION_EMPLEADOS;
-//const int SUMATORIA_SALUD_EMPRESA;
-//const int SUMATORIA_PENSION_EMPRESA;
-//const int RETENCION_FUENTE;
 
-//Imprime detalles de nomina
+//Imprime detalles de sueldo
 float numeroDeMinimos(float nomina) {
 	float resultado;
 	__asm {
@@ -208,7 +207,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			printf("%.2f\n", sueldoF);
 			printf("El numero de minimos es: %f\n", numeroDeMinimos(sueldoF));
 			printf("El subsidio de transporte es: %f\n", subsidioTransporte(NUMERO_DOS));
-			printf("El subsidio de aporte a solidaridad pensional: %f\n", aporteFondoSolidaridadPensional(a));
+			printf("El aporte al fondo de solidaridad pensional: %f\n", aporteFondoSolidaridadPensional(a));
 		}
 	}
 	else{
