@@ -10,40 +10,42 @@
 
 using namespace std;
 
-const float SUELDO_BASICO = 644350.00;
-const float SUBSIDIO_TRANSPORTE = 74000.00;
-const float APORTE_SALUD_EMPLEADO = 0.04;
-const float APORTE_PENSION_EMPLEADO = 0.04;
-const float APORTE_SALUD_EMPRESA = 0.045;
-const float APORTE_PENSION_EMPRESA = 0.08;
-const float APORTE_FONDO_SOLIDARIDAD1 = 0.01;
-const float APORTE_FONDO_SOLIDARIDAD2 = 0.012;
-const float APORTE_FONDO_SOLIDARIDAD3 = 0.014;
-const float APORTE_FONDO_SOLIDARIDAD4 = 0.016;
-const float APORTE_FONDO_SOLIDARIDAD5 = 0.018;
-const float APORTE_FONDO_SOLIDARIDAD6 = 0.02;
-const float COMPARACION_AFSP1 = 4.0;
-const float COMPARACION_AFSP2 = 16.0;
-const float COMPARACION_AFSP3 = 17.0;
-const float COMPARACION_AFSP4 = 18.0;
-const float COMPARACION_AFSP5 = 19.0;
-const float COMPARACION_AFSP6 = 20.0;
-const float NUMERO_DOS = 2.00;
-const float NUMERO_CUATRO = 4.00;
-const float NUMERO_16 = 16.00;
-const float NUMERO_17 = 17.00;
-const float NUMERO_18 = 18.00;
-const float NUMERO_19 = 19.00;
-const float NUMERO_20 = 20.00;
-const float PORCENTAJE_ILG = 0.25;
-const float PESOS_EN_UVTs = 28279.00;
-const float UVTS_95 = 95.00;
-const float UVTS_150 = 150.00;
-const float UVTS_360 = 360.00;
-const float PORCENTAJE_UVTS19 = 0.19;
-const float PORCENTAJE_UVTS28 = 0.28;
-const float PORCENTAJE_UVTS33 = 0.33;
-const float LIMPIAR_REGISTROS = 0.0;
+float SUELDO_BASICO = 644350.00;
+float SUBSIDIO_TRANSPORTE = 74000.00;
+float APORTE_SALUD_EMPLEADO = 0.04;
+float APORTE_PENSION_EMPLEADO = 0.04;
+float APORTE_SALUD_EMPRESA = 0.045;
+float APORTE_PENSION_EMPRESA = 0.08;
+float APORTE_FONDO_SOLIDARIDAD1 = 0.01;
+float APORTE_FONDO_SOLIDARIDAD2 = 0.012;
+float APORTE_FONDO_SOLIDARIDAD3 = 0.014;
+float APORTE_FONDO_SOLIDARIDAD4 = 0.016;
+float APORTE_FONDO_SOLIDARIDAD5 = 0.018;
+float APORTE_FONDO_SOLIDARIDAD6 = 0.02;
+float COMPARACION_AFSP1 = 4.0;
+float COMPARACION_AFSP2 = 16.0;
+float COMPARACION_AFSP3 = 17.0;
+float COMPARACION_AFSP4 = 18.0;
+float COMPARACION_AFSP5 = 19.0;
+float COMPARACION_AFSP6 = 20.0;
+float NUMERO_DOS = 2.00;
+float NUMERO_CUATRO = 4.00;
+float NUMERO_16 = 16.00;
+float NUMERO_17 = 17.00;
+float NUMERO_18 = 18.00;
+float NUMERO_19 = 19.00;
+float NUMERO_20 = 20.00;
+float PORCENTAJE_ILG = 0.25;
+float PESOS_EN_UVTs = 28279.00;
+float UVTS_95 = 95.00;
+float UVTS_150 = 150.00;
+float UVTS_360 = 360.00;
+float PORCENTAJE_UVTS19 = 0.19;
+float PORCENTAJE_UVTS28 = 0.28;
+float PORCENTAJE_UVTS33 = 0.33;
+float LIMPIAR_REGISTROS = 0.0;
+float nomina = 0.0;
+float numSueldo = 0.0;
 
 //Imprime detalles de sueldo
 float numeroDeMinimos(float nomina) {
@@ -186,12 +188,15 @@ float aporteFondoSolidaridadPensional(float numSueldo){
 	return resultado;
 }
 
-//Encontrar el ILG en pesos para comprar con UVTS, aun no esta terminado
-float IngresoLaboralGravado(float nomina){
+float salud = aporteSaludEmpleado(nomina);
+float pension = aportePensionEmpleado(nomina);
+float fondo = aporteFondoSolidaridadPensional(numSueldo);
+//Encontrar el ILG en pesos para comparar con UVTS, aun no esta terminado
+float ingresoLaboralGravado(float salud, float pension, float fondo){
 	float resultado;
 	__asm {
 		FLD dword ptr[nomina];
-		FLD dword ptr[APORTE_SALUD_EMPLEADO];
+		FLD dword ptr[salud];
 		FSUB;
 		FSTP dword ptr[resultado];
 	}
@@ -218,8 +223,10 @@ int _tmain(int argc, _TCHAR* argv[])
 			printf("%.2f\n", sueldoF);
 			printf("El numero de minimos es: %.2f\n", numeroDeMinimos(sueldoF));
 			printf("El subsidio de transporte es: %.2f\n", subsidioTransporte(numeroDeMinimos(sueldoF)));
-			printf("El aporte al fondo de solidaridad pensional: %.2f\n", aporteFondoSolidaridadPensional(a));
-			//printf("El ILG: %.2f\n", IngresoLaboralGravado);
+			printf("El Aporte a Salud del empleado es: %.2f\n", aporteSaludEmpleado(sueldoF));
+			printf("El Aporte a Pension del empleado es: %.2f\n", aportePensionEmpleado(sueldoF));
+			printf("El Aporte al fondo de solidaridad pensional es: %.2f\n", aporteFondoSolidaridadPensional(a));
+			printf("El ILG: %.2f\n", ingresoLaboralGravado);
 		}
 	}
 	else{
