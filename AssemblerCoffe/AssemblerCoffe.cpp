@@ -35,15 +35,15 @@ const float NUMERO_17 = 17.00;
 const float NUMERO_18 = 18.00;
 const float NUMERO_19 = 19.00;
 const float NUMERO_20 = 20.00;
+const float PORCENTAJE_ILG = 0.25;
 const float PESOS_EN_UVTs = 28279.00;
-const float LIMPIAR_REGISTROS = 0.0;
 const float UVTS_95 = 95.00;
 const float UVTS_150 = 150.00;
 const float UVTS_360 = 360.00;
 const float PORCENTAJE_UVTS19 = 0.19;
 const float PORCENTAJE_UVTS28 = 0.28;
 const float PORCENTAJE_UVTS33 = 0.33;
-
+const float LIMPIAR_REGISTROS = 0.0;
 
 //Imprime detalles de sueldo
 float numeroDeMinimos(float nomina) {
@@ -186,6 +186,17 @@ float aporteFondoSolidaridadPensional(float numSueldo){
 	return resultado;
 }
 
+//Encontrar el ILG en pesos para comprar con UVTS, aun no esta terminado
+float IngresoLaboralGravado(float nomina){
+	float resultado;
+	__asm {
+		FLD dword ptr[nomina];
+		FLD dword ptr[APORTE_SALUD_EMPLEADO];
+		FSUB;
+		FSTP dword ptr[resultado];
+	}
+	return resultado;
+}
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -205,9 +216,10 @@ int _tmain(int argc, _TCHAR* argv[])
 			ss >> sueldoF;
 			cout << cedula << nombre;
 			printf("%.2f\n", sueldoF);
-			printf("El numero de minimos es: %f\n", numeroDeMinimos(sueldoF));
-			printf("El subsidio de transporte es: %f\n", subsidioTransporte(NUMERO_DOS));
-			printf("El aporte al fondo de solidaridad pensional: %f\n", aporteFondoSolidaridadPensional(a));
+			printf("El numero de minimos es: %.2f\n", numeroDeMinimos(sueldoF));
+			printf("El subsidio de transporte es: %.2f\n", subsidioTransporte(numeroDeMinimos(sueldoF)));
+			printf("El aporte al fondo de solidaridad pensional: %.2f\n", aporteFondoSolidaridadPensional(a));
+			//printf("El ILG: %.2f\n", IngresoLaboralGravado);
 		}
 	}
 	else{
