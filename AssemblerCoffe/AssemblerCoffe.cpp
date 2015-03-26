@@ -22,12 +22,6 @@ float APORTE_FONDO_SOLIDARIDAD3 = 0.014;
 float APORTE_FONDO_SOLIDARIDAD4 = 0.016;
 float APORTE_FONDO_SOLIDARIDAD5 = 0.018;
 float APORTE_FONDO_SOLIDARIDAD6 = 0.02;
-float COMPARACION_AFSP1 = 4.0;
-float COMPARACION_AFSP2 = 16.0;
-float COMPARACION_AFSP3 = 17.0;
-float COMPARACION_AFSP4 = 18.0;
-float COMPARACION_AFSP5 = 19.0;
-float COMPARACION_AFSP6 = 20.0;
 float NUMERO_DOS = 2.00;
 float NUMERO_CUATRO = 4.00;
 float NUMERO_16 = 16.00;
@@ -44,9 +38,10 @@ float PORCENTAJE_UVTS19 = 0.19;
 float PORCENTAJE_UVTS28 = 0.28;
 float PORCENTAJE_UVTS33 = 0.33;
 float LIMPIAR_REGISTROS = 0.0;
-float nomina = 2577400.00;
+float nomina = 5000000.00;
 float numSueldo;
-
+float ilg;
+float uvts;
 //Imprime detalles de sueldo
 float numeroDeMinimos(float nomina) {
 	float resultado;
@@ -206,7 +201,6 @@ float encontrarAporteFondoSolidaridadPensional(float porcentaje){
 //Encontrar el ILG en pesos para comparar con UVTS, aun no esta terminado
 float ingresoLaboralGravado(float salud, float pension, float fondo){
 	float resultado;
-	float ilg;
 	__asm {
 		FLD dword ptr[nomina];
 		FLD dword ptr[salud];
@@ -215,7 +209,7 @@ float ingresoLaboralGravado(float salud, float pension, float fondo){
 		FSUB;
 		FLD dword ptr[fondo];
 		FSUB;
-		FST dword ptr[ilg];
+		FST dword ptr[ilg]; // se almacena el ilg 
 		FLD dword ptr[PORCENTAJE_ILG];
 		FMUL;
 		FSTP dword ptr[resultado];
@@ -225,7 +219,60 @@ float ingresoLaboralGravado(float salud, float pension, float fondo){
 		FSTP dword ptr[resultado];
 		
 	}
+	return resultado; // es la base de la retencion en la fuente
+}
+
+float encontrarUvts(float valor){
+	float resultado;
+	__asm{
+		FLD dword ptr[valor];
+		FLD dword ptr[PESOS_EN_UVTs];
+		FDIV;
+		FSTP dword ptr[resultado];
+	}
 	return resultado;
+}
+
+float encontrarRetencionEnLaFuente(float uvts){
+	float resultado;
+	__asm{
+		FLD dword ptr[UVTS_95];
+		FLD dword ptr[uvts];
+		FCOMIP ST(0), ST(1);
+		JB nopaga;
+		FSTP dword ptr[resultado];
+		FLD dword ptr[UVTS_150];
+		FLD dword ptr[uvts];
+		FCOMIP ST(0), ST(1);
+		JB esmenor150;
+		FSTP dword ptr[resultado];
+		FLD dword ptr[UVTS_360];
+		FLD dword ptr[uvts];
+		FCOMIP ST(0), ST(1);
+		JB esmenor360
+		JA es360mas;
+		
+	nopaga:
+		FSTP dword ptr[resultado];
+		FLD dword ptr[LIMPIAR_REGISTROS];
+		JMP retorno;
+	esmenor150:
+		FSTP dword ptr[resultado];
+		FLD dword ptr[PORCENTAJE_UVTS19];
+		JMP retorno;
+	esmenor360:
+		FSTP dword ptr[resultado];
+		FLD dword ptr[PORCENTAJE_UVTS28];
+		JMP retorno;
+	es360mas:
+		FSTP dword ptr[resultado];
+		FLD dword ptr[PORCENTAJE_UVTS33];
+		JMP retorno;
+	retorno:
+		FSTP dword ptr[resultado];
+	}
+	return resultado;
+
 }
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -236,6 +283,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	float salud = aporteSaludEmpleado(nomina);
 	float pension = aportePensionEmpleado(nomina);
 	float fondo = encontrarAporteFondoSolidaridadPensional(aporteFondoSolidaridadPensional(numSueldo));
+	uvts = encontrarUvts(ingresoLaboralGravado(salud, pension, fondo));
 	if (inFile.is_open()){
 		while (!inFile.eof()){
 			string cedula;
@@ -255,7 +303,10 @@ int _tmain(int argc, _TCHAR* argv[])
 			printf("El Aporte a Pension del empleado es: %.2f\n", aportePensionEmpleado(nomina));
 			printf("El porcentaje de aporte al fondo de solidaridad pensional es: %.2f\n", aporteFondoSolidaridadPensional(numSueldo));
 			printf("El Aporte al fondo de solidaridad pensional es: %.2f\n", fondo);
-			printf("El ILG: %.2f\n", ingresoLaboralGravado(salud,pension,fondo));
+			printf("el ilg es : %.2f\n", ilg);
+			printf("La base en la retencion en la fuente es : %.2f\n", ingresoLaboralGravado(salud,pension,fondo));
+			printf("La cantidad de uvts: %.2f\n", uvts);
+			printf("el porcentaje en la retencino en la fente es: %.2f\n", encontrarRetencionEnLaFuente(uvts));
 		}
 	}
 	else{
