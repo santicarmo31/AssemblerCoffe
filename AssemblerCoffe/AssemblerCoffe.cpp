@@ -44,8 +44,8 @@ float PORCENTAJE_UVTS19 = 0.19;
 float PORCENTAJE_UVTS28 = 0.28;
 float PORCENTAJE_UVTS33 = 0.33;
 float LIMPIAR_REGISTROS = 0.0;
-float nomina = 0.0;
-float numSueldo = 0.0;
+float nomina = 2577400.00;
+float numSueldo;
 
 //Imprime detalles de sueldo
 float numeroDeMinimos(float nomina) {
@@ -188,17 +188,42 @@ float aporteFondoSolidaridadPensional(float numSueldo){
 	return resultado;
 }
 
-float salud = aporteSaludEmpleado(nomina);
-float pension = aportePensionEmpleado(nomina);
-float fondo = aporteFondoSolidaridadPensional(numSueldo);
+float encontrarAporteFondoSolidaridadPensional(float porcentaje){
+	float resultado;
+	cout << porcentaje << endl;
+	if (porcentaje > 0){
+		__asm {
+			FLD dword ptr[nomina];
+			FLD dword ptr[porcentaje];
+			FMUL;
+			FSTP dword ptr[resultado];
+		}
+	}
+	return resultado;
+}
+
+
 //Encontrar el ILG en pesos para comparar con UVTS, aun no esta terminado
 float ingresoLaboralGravado(float salud, float pension, float fondo){
 	float resultado;
+	float ilg;
 	__asm {
 		FLD dword ptr[nomina];
 		FLD dword ptr[salud];
 		FSUB;
+		FLD dword ptr[pension];
+		FSUB;
+		FLD dword ptr[fondo];
+		FSUB;
+		FST dword ptr[ilg];
+		FLD dword ptr[PORCENTAJE_ILG];
+		FMUL;
 		FSTP dword ptr[resultado];
+		FLD dword ptr[ilg];
+		FLD dword ptr[resultado];
+		FSUB;
+		FSTP dword ptr[resultado];
+		
 	}
 	return resultado;
 }
@@ -207,7 +232,10 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	ifstream inFile;
 	inFile.open("nomina.txt");
-	float a = 21.00;
+	numSueldo = numeroDeMinimos(nomina);
+	float salud = aporteSaludEmpleado(nomina);
+	float pension = aportePensionEmpleado(nomina);
+	float fondo = encontrarAporteFondoSolidaridadPensional(aporteFondoSolidaridadPensional(numSueldo));
 	if (inFile.is_open()){
 		while (!inFile.eof()){
 			string cedula;
@@ -220,13 +248,14 @@ int _tmain(int argc, _TCHAR* argv[])
 			float sueldoF;
 			ss >> sueldoF;
 			cout << cedula << nombre;
-			printf("%.2f\n", sueldoF);
-			printf("El numero de minimos es: %.2f\n", numeroDeMinimos(sueldoF));
-			printf("El subsidio de transporte es: %.2f\n", subsidioTransporte(numeroDeMinimos(sueldoF)));
-			printf("El Aporte a Salud del empleado es: %.2f\n", aporteSaludEmpleado(sueldoF));
-			printf("El Aporte a Pension del empleado es: %.2f\n", aportePensionEmpleado(sueldoF));
-			printf("El Aporte al fondo de solidaridad pensional es: %.2f\n", aporteFondoSolidaridadPensional(a));
-			printf("El ILG: %.2f\n", ingresoLaboralGravado);
+			printf("%.2f\n", nomina);
+			printf("El numero de minimos es: %.2f\n", numeroDeMinimos(nomina));
+			printf("El subsidio de transporte es: %.2f\n", subsidioTransporte(numeroDeMinimos(nomina)));
+			printf("El Aporte a Salud del empleado es: %.2f\n", aporteSaludEmpleado(nomina));
+			printf("El Aporte a Pension del empleado es: %.2f\n", aportePensionEmpleado(nomina));
+			printf("El porcentaje de aporte al fondo de solidaridad pensional es: %.2f\n", aporteFondoSolidaridadPensional(numSueldo));
+			printf("El Aporte al fondo de solidaridad pensional es: %.2f\n", fondo);
+			printf("El ILG: %.2f\n", ingresoLaboralGravado(salud,pension,fondo));
 		}
 	}
 	else{
