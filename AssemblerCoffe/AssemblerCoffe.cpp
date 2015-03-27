@@ -10,39 +10,40 @@
 
 using namespace std;
 
-float SUELDO_BASICO = 644350.00;
-float SUBSIDIO_TRANSPORTE = 74000.00;
-float APORTE_SALUD_EMPLEADO = 0.04;
-float APORTE_PENSION_EMPLEADO = 0.04;
-float APORTE_SALUD_EMPRESA = 0.045;
-float APORTE_PENSION_EMPRESA = 0.08;
-float APORTE_FONDO_SOLIDARIDAD1 = 0.01;
-float APORTE_FONDO_SOLIDARIDAD2 = 0.012;
-float APORTE_FONDO_SOLIDARIDAD3 = 0.014;
-float APORTE_FONDO_SOLIDARIDAD4 = 0.016;
-float APORTE_FONDO_SOLIDARIDAD5 = 0.018;
-float APORTE_FONDO_SOLIDARIDAD6 = 0.02;
+float SUELDO_BASICO = 644350.00;			//sueldo basico para calculos (ejem: para encontrar numMinimos)
+float SUBSIDIO_TRANSPORTE = 74000.00;		//subsidio de transporte para calculos
+float APORTE_SALUD_EMPLEADO = 0.04;			//porcentaje de aporte a la salud por parte de los empleados (4%)
+float APORTE_PENSION_EMPLEADO = 0.04;		//porcentaje de aporte a la pension por parte de los empleados (4%)
+float APORTE_SALUD_EMPRESA = 0.045;			//porcentaje de aporte a la salud por parte de los empresa (4.5%)
+float APORTE_PENSION_EMPRESA = 0.08;		//porcentaje de aporte a la pension por parte de los empresa (8%)
+float APORTE_FONDO_SOLIDARIDAD1 = 0.01;		//porcentaje de aporte al fondo de solidaridad pensional (1%)
+float APORTE_FONDO_SOLIDARIDAD2 = 0.012;	//porcentaje de aporte al fondo de solidaridad pensional (1.2%)
+float APORTE_FONDO_SOLIDARIDAD3 = 0.014;	//porcentaje de aporte al fondo de solidaridad pensional (1.4%)
+float APORTE_FONDO_SOLIDARIDAD4 = 0.016;	//porcentaje de aporte al fondo de solidaridad pensional (1.6%)
+float APORTE_FONDO_SOLIDARIDAD5 = 0.018;	//porcentaje de aporte al fondo de solidaridad pensional (1.8%)
+float APORTE_FONDO_SOLIDARIDAD6 = 0.02;		//porcentaje de aporte al fondo de solidaridad pensional (2%)
 float NUMERO_DOS = 2.00;
-float NUMERO_CUATRO = 4.00;
-float NUMERO_16 = 16.00;
-float NUMERO_17 = 17.00;
-float NUMERO_18 = 18.00;
-float NUMERO_19 = 19.00;
-float NUMERO_20 = 20.00;
-float PORCENTAJE_ILG = 0.25;
-float PESOS_EN_UVTs = 28279.00;
-float UVTS_95 = 95.00;
-float UVTS_150 = 150.00;
-float UVTS_360 = 360.00;
-float PORCENTAJE_UVTS19 = 0.19;
-float PORCENTAJE_UVTS28 = 0.28;
-float PORCENTAJE_UVTS33 = 0.33;
-float LIMPIAR_REGISTROS = 0.0;
+float NUMERO_CUATRO = 4.00;					//numero 4 para calculos en aporte al fondo de solidaridad pensional
+float NUMERO_16 = 16.00;					//numero 16 para calculos en aporte al fondo de solidaridad pensional
+float NUMERO_17 = 17.00;					//numero 17 para calculos en aporte al fondo de solidaridad pensional
+float NUMERO_18 = 18.00;					//numero 18 para calculos en aporte al fondo de solidaridad pensional
+float NUMERO_19 = 19.00;					//numero 19 para calculos en aporte al fondo de solidaridad pensional
+float NUMERO_20 = 20.00;					//numero 20 para calculos en aporte al fondo de solidaridad pensional
+float PORCENTAJE_ILG = 0.25;				//porcentaje para encontrar el ilg en pesos (25%)
+float PESOS_EN_UVTs = 28279.00;				//pesos en uvts para dividirlo al ilg y asi encontrar los uvts para calculos en la retencion
+float UVTS_95 = 95.00;						//numero 95 para calculos en retencion en la fuente
+float UVTS_150 = 150.00;					//numero 150 para calculos en retencion en la fuente
+float UVTS_360 = 360.00;					//numero 360 para calculos en retencion en la fuente
+float PORCENTAJE_UVTS19 = 0.19;				//porcentaje para calculos en retencion en la fuente (19%)
+float PORCENTAJE_UVTS28 = 0.28;				//porcentaje para calculos en retencion en la fuente (28%)
+float PORCENTAJE_UVTS33 = 0.33;				//porcentaje para calculos en retencion en la fuente (33%)
+float LIMPIAR_REGISTROS = 0.0;				//variable para limpiar registros
 float nomina = 5000000.00;
 float numSueldo;
 float ilg;
 float uvts;
-//Imprime detalles de sueldo
+
+//Imprime detalles de numero de sueldos
 float numeroDeMinimos(float nomina) {
 	float resultado;
 	__asm {
@@ -54,6 +55,7 @@ float numeroDeMinimos(float nomina) {
 	return resultado;
 }
 
+//Imprime detalles del aporte a salud del empleado
 float aporteSaludEmpleado(float nomina){
 	float resultado;
 	__asm {
@@ -64,6 +66,8 @@ float aporteSaludEmpleado(float nomina){
 	}
 	return resultado;
 }
+
+//Imprime detalles del aporte a pension del empleado
 float aporteSaludEmpresa(float nomina){
 	float resultado;
 	__asm {
@@ -75,6 +79,7 @@ float aporteSaludEmpresa(float nomina){
 	return resultado;
 }
 
+//Imprime detalles del aporte a salud de la empresa
 float aportePensionEmpleado(float nomina){
 	float resultado;
 	__asm {
@@ -86,6 +91,7 @@ float aportePensionEmpleado(float nomina){
 	return resultado;
 }
 
+//Imprime detalles del aporte a pension de la empresa
 float aportePensionEmpresa(float nomina){
 	float resultado;
 	__asm {
@@ -97,6 +103,7 @@ float aportePensionEmpresa(float nomina){
 	return resultado;
 }
 
+//Imprime detalles si paga o no subsidio de transporte
 float subsidioTransporte(float numSueldo){
 	float resultado;
 	__asm {
@@ -117,6 +124,7 @@ float subsidioTransporte(float numSueldo){
 	return resultado;
 }
 
+//Imprime detalles de calculos para fondo de solidaridad pensional
 float aporteFondoSolidaridadPensional(float numSueldo){
 	float resultado;
 	__asm {
@@ -183,6 +191,7 @@ float aporteFondoSolidaridadPensional(float numSueldo){
 	return resultado;
 }
 
+//Imprime detalles para encontrar el aporte al fondo de solidaridad pensional
 float encontrarAporteFondoSolidaridadPensional(float porcentaje){
 	float resultado;
 	cout << porcentaje << endl;
@@ -197,8 +206,7 @@ float encontrarAporteFondoSolidaridadPensional(float porcentaje){
 	return resultado;
 }
 
-
-//Encontrar el ILG en pesos para comparar con UVTS, aun no esta terminado
+//Encontrar el ILG en pesos para comparar con UVTS
 float ingresoLaboralGravado(float salud, float pension, float fondo){
 	float resultado;
 	__asm {
@@ -217,11 +225,11 @@ float ingresoLaboralGravado(float salud, float pension, float fondo){
 		FLD dword ptr[resultado];
 		FSUB;
 		FSTP dword ptr[resultado];
-		
 	}
 	return resultado; // es la base de la retencion en la fuente
 }
 
+//Imprime detalles para encontrar los UVTs 
 float encontrarUvts(float valor){
 	float resultado;
 	__asm{
@@ -233,6 +241,7 @@ float encontrarUvts(float valor){
 	return resultado;
 }
 
+//Imprime detalles para encontrar la rentencion en la fuente
 float encontrarRetencionEnLaFuente(float uvts){
 	float resultado;
 	__asm{
@@ -249,9 +258,8 @@ float encontrarRetencionEnLaFuente(float uvts){
 		FLD dword ptr[UVTS_360];
 		FLD dword ptr[uvts];
 		FCOMIP ST(0), ST(1);
-		JB esmenor360
-		JA es360mas;
-		
+		JB esmenor360;
+		JA esmayor360;
 	nopaga:
 		FSTP dword ptr[resultado];
 		FLD dword ptr[LIMPIAR_REGISTROS];
@@ -264,7 +272,7 @@ float encontrarRetencionEnLaFuente(float uvts){
 		FSTP dword ptr[resultado];
 		FLD dword ptr[PORCENTAJE_UVTS28];
 		JMP retorno;
-	es360mas:
+	esmayor360:
 		FSTP dword ptr[resultado];
 		FLD dword ptr[PORCENTAJE_UVTS33];
 		JMP retorno;
@@ -272,9 +280,9 @@ float encontrarRetencionEnLaFuente(float uvts){
 		FSTP dword ptr[resultado];
 	}
 	return resultado;
-
 }
 
+//Main principal
 int _tmain(int argc, _TCHAR* argv[])
 {
 	ifstream inFile;
@@ -314,5 +322,4 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 	return 0;
 }
-
 
