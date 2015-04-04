@@ -1,2 +1,3 @@
-1017231676;alejandra perez;644350;
-1152703352;Sergio Atehortua;5000000;
+1017231676;alejandra perez;1345250;
+1152703352;Sergio Atehortua;4543250;
+43789987;Lina Marulanda;7890000;

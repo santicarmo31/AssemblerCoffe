@@ -6,7 +6,6 @@
 #include <iostream> //Entrada y salida de datos
 #include <string> //Manejar String
 #include <windows.h>
-#include<conio.h>
 #include <sstream> 
 
 using namespace std;
@@ -42,12 +41,12 @@ float PORCENTAJE_UVTS28 = 0.28;				//porcentaje para calculos en retencion en la
 float PORCENTAJE_UVTS33 = 0.33;				//porcentaje para calculos en retencion en la fuente (33%)
 float LIMPIAR_REGISTROS = 0.0;				//variable para limpiar registros
 //float nomina = 645000.00; 
-float numSueldo;
+//float numSueldo;
 float ilg;
-float uvts;
-float tarifaRetenFuente;
+float uvts;										
+float tarifaRetenFuente;					//Porcentaje UVTS
 
-//Imprime detalles de numero de sueldos
+//Imprime detalles de numero de sueldos y recibe como argumento el salario inicial
 float numeroDeMinimos(float nomina) {
 	float resultado = 0.00;
 	__asm {
@@ -59,19 +58,19 @@ float numeroDeMinimos(float nomina) {
 	return resultado;
 }
 
-//Imprime detalles del aporte a salud del empleado
+//Imprime detalles del aporte a salud del empleado y recibe como argumento el salario inicial
 float aporteSaludEmpleado(float nomina){
-	float resultado = 0.00;
+	float resultado = 0.00; //Resultado de operacion a retornar
 	__asm {
-		FLD dword ptr[nomina];
-		FLD dword ptr[APORTE_SALUD_EMPLEADO];
-		FMUL;
-		FSTP dword ptr[resultado];
+		FLD dword ptr[nomina]; //Carga nomina al a posición(0) de la pila
+		FLD dword ptr[APORTE_SALUD_EMPLEADO]; //Carga APORTE_SALUD_EMPLEADO al a posición(1) de la pila
+		FMUL; //Multiplica los valores
+		FSTP dword ptr[resultado]; //Almacena en resultado el valor de la ultima operacion realizada
 	}
 	return resultado;
 }
 
-//Imprime detalles del aporte a pension del empleado
+//Imprime detalles del aporte a pension del empleado y recibe como argumento el salario inicial
 float aporteSaludEmpresa(float nomina){
 	float resultado = 0.00;
 	__asm {
@@ -83,7 +82,7 @@ float aporteSaludEmpresa(float nomina){
 	return resultado;
 }
 
-//Imprime detalles del aporte a salud de la empresa
+//Imprime detalles del aporte a salud de la empresa y recibe como argumento el salario inicial
 float aportePensionEmpleado(float nomina){
 	float resultado = 0.00;
 	__asm {
@@ -95,7 +94,7 @@ float aportePensionEmpleado(float nomina){
 	return resultado;
 }
 
-//Imprime detalles del aporte a pension de la empresa
+//Imprime detalles del aporte a pension de la empresa y recibe como argumento el salario inicial
 float aportePensionEmpresa(float nomina){
 	float resultado = 0.00;
 	__asm {
@@ -107,14 +106,14 @@ float aportePensionEmpresa(float nomina){
 	return resultado;
 }
 
-//Imprime detalles si paga o no subsidio de transporte
+//Imprime detalles si paga o no subsidio de transporte y recibe como argumento el numero de salarios minimos
 float subsidioTransporte(float numSueldo){
 	float resultado = 0.00;
 	__asm {
-		FLD dword ptr[numSueldo];//7
-		FLD dword ptr[NUMERO_DOS];//2
-		FCOMIP ST(0), ST(1);
-		JB nopaga; 
+		FLD dword ptr[numSueldo];
+		FLD dword ptr[NUMERO_DOS];
+		FCOMIP ST(0), ST(1); //Compara las posiciones 0 y 1 de la pila 
+		JB nopaga; //Salta a retorno si numSuelo es menor igual a NUMERO_DOS
 		FSTP dword ptr[resultado];
 		FLD dword ptr[SUBSIDIO_TRANSPORTE];
 		JMP retorno;
@@ -198,7 +197,7 @@ float aporteFondoSolidaridadPensional(float numSueldo){
 //Imprime detalles para encontrar el aporte al fondo de solidaridad pensional
 float encontrarAporteFondoSolidaridadPensional(float porcentaje,float nomina){
 	float resultado = 0.00;
-	cout << porcentaje << endl;
+	//cout << porcentaje << endl;
 	if (porcentaje > 0){
 		__asm {
 			FLD dword ptr[nomina];
@@ -331,47 +330,120 @@ float sueldoFinal(float ILB, float retencion, float transporte){
 	return resultado;
 }
 
+float TotalSaludEmple(float acomulador, float valor){
+	float resultado = 0.0;
+	_asm{
+		FLD dword ptr[acomulador];
+		FLD dword ptr[valor];
+		FADD;
+		FSTP dword ptr[resultado]
+	}
+	return resultado;
+}
+
+float TotalSaludEmpre(float acomulador, float valor){
+	float resultado = 0.0;
+	_asm{
+		FLD dword ptr[acomulador];
+		FLD dword ptr[valor];
+		FADD;
+		FSTP dword ptr[resultado]
+	}
+	return resultado;
+}
+
+float TotalPensionEmple(float acomulador, float valor){
+	float resultado = 0.0;
+	_asm{
+		FLD dword ptr[acomulador];
+		FLD dword ptr[valor];
+		FADD;
+		FSTP dword ptr[resultado]
+	}
+	return resultado;
+}
+
+float TotalPensionEmpre(float acomulador, float valor){
+	float resultado = 0.0;
+	_asm{
+		FLD dword ptr[acomulador];
+		FLD dword ptr[valor];
+		FADD;
+		FSTP dword ptr[resultado]
+	}
+	return resultado;
+}
+
+float TotalAporteFondoPension(float acomulador, float valor){
+	float resultado = 0.0;
+	_asm{
+		FLD dword ptr[acomulador];
+		FLD dword ptr[valor];
+		FADD;
+		FSTP dword ptr[resultado]
+	}
+	return resultado;
+}
+
+float TotalRetenFuente(float acomulador, float valor){
+	float resultado = 0.0;
+	_asm{
+		FLD dword ptr[acomulador];
+		FLD dword ptr[valor];
+		FADD;
+		FSTP dword ptr[resultado]
+	}
+	return resultado;
+}
+
 //Main principal
 int _tmain(int argc, _TCHAR* argv[])
 {
-	ifstream inFile;
-	inFile.open("nomina.txt");
+	ifstream inFile; //Manejar archivos
+	inFile.open("nomina.txt"); //Archivo a abrir 
 	
-	float numSueldo;
-	float saludemple;
-	float saludEmpresa;
-	float pensionemple;
-	float pensionEmpresa;
-	float fondo;
-	float ingrelabgravado;
-	float aportefonsolipensio;
-	float retenenlafuente;
-	float subTransporte;
-	float salario;
+	float numSueldo = 0.0; //Numero de salarios mínimos mensuales actuales vigentes
+	float saludemple = 0.0; //Mondo dado por el empleado a salud
+	float saludEmpresa = 0.0; //Mondo subsidiado por el empleador a salud del empleado
+	float pensionemple = 0.0; //Mondo dado por el empleado a pension
+	float pensionEmpresa = 0.0; //Mondo subsidiado por el empleador a pension del empleado
+	float fondo = 0.0; //Monto de salario a ser dado al fondo de solidaridad pensional
+	float ingrelabgravado = 0.0; //Monto ingreso laboral gravado
+	float aportefonsolipensio = 0.0; //Porcentaje de sueldo a ser dado al fondo de solidaridad pensional
+	float retenenlafuente = 0.0; //Monto de rentencion en la fuente
+	float subTransporte = 0.0; //Subsidio de transporte
+	float salario = 0.0; //Salario final
+	float totalAportesSaludEmple = 0.0; //Sumatoria de aportes a salud dado por los empleados
+	float totalAportesSaludEmpre = 0.0; //Sumatoria de aportes a salud dado por el empleador
+	float totalAportesPensionEmple = 0.0; //Sumatoria de aportes a pencion dado por los empleados
+	float totalAportesPensionEmpre = 0.0; //Sumatoria de aportes a pension dado por empleador
+	float totalAportesFondoPension = 0.0; //Sumatoria de aportes a fondo de solidaridad pensional
+	float totalPagarDian = 0.0; //Sumatoria de total de montos de retencion en la fuente descontado a los empleados
 	string salida = "";
 	if (inFile.is_open()){
 		while (!inFile.eof()){
 			string cedula;
 			string nombre;
 			string sueldo;
-			getline(inFile, cedula, ';');
-			getline(inFile, nombre, ';');
-			getline(inFile, sueldo, '\n');
-			stringstream ss(sueldo);
+			getline(inFile, cedula, ';');  //Obtener texto hasta el ";" el cual almacena en variable cédula
+			getline(inFile, nombre, ';');  //Obtener texto hasta el ";" el cual almacena en variable nombre
+			getline(inFile, sueldo, '\n'); //Obtener texto hasta el salto de línea "\n" el cual almacena en variable sueldo
+			stringstream ss(sueldo); //Conversión de string a flotante 
 			float nomina;
-			ss >> nomina;
-			numSueldo = numeroDeMinimos(nomina);
-			saludemple = aporteSaludEmpleado(nomina);
-			saludEmpresa = aporteSaludEmpresa(nomina);
-			pensionemple = aportePensionEmpleado(nomina);
-			pensionEmpresa = aportePensionEmpresa(nomina);
-			aportefonsolipensio = aporteFondoSolidaridadPensional(numSueldo);
-			fondo = encontrarAporteFondoSolidaridadPensional(aportefonsolipensio,nomina);
-			ingrelabgravado = ingresoLaboralGravado(saludemple, pensionemple, fondo,nomina);
-			uvts = encontrarUvts(ingrelabgravado);
-			retenenlafuente = encontrarRetencionEnLaFuente(uvts, ingrelabgravado);
-			subTransporte = subsidioTransporte(numSueldo);
-			salario = sueldoFinal(ilg, retenenlafuente, subTransporte);
+			ss >> nomina; //Traspaso de la conversión
+			numSueldo = numeroDeMinimos(nomina); //Cálculo de número de salarios mínimos actuales vigentes que posee el salario 
+			saludemple = aporteSaludEmpleado(nomina); //Cálculo monto de aporte a salud por parte del empleado
+			saludEmpresa = aporteSaludEmpresa(nomina); //Cálculo monto de aporte a salud por parte del empleador
+			pensionemple = aportePensionEmpleado(nomina);//Cálculo monto de aporte a pension por parte del empleado 
+			pensionEmpresa = aportePensionEmpresa(nomina); //Cálculo monto de aporte a pension por parte del empleador
+			aportefonsolipensio = aporteFondoSolidaridadPensional(numSueldo); //Cálculo porcentaje para aporte de solidaridad pensional
+			fondo = encontrarAporteFondoSolidaridadPensional(aportefonsolipensio,nomina);//Cálculo aporte fondo de solidaridad pensional
+			ingrelabgravado = ingresoLaboralGravado(saludemple, pensionemple, fondo,nomina); //Cálculo ingreso laboral gravado
+			uvts = encontrarUvts(ingrelabgravado); //Cálculo de UVTS
+			retenenlafuente = encontrarRetencionEnLaFuente(uvts, ingrelabgravado); //Cálculo retención en la fuente
+			subTransporte = subsidioTransporte(numSueldo); //Cáculo subsidio de transporte
+			salario = sueldoFinal(ilg, retenenlafuente, subTransporte); //Cáculo salario final
+			
 			//float uvt2(encontrarUvts(ingresoLaboralGravado(aporteSaludEmpleado(sueldoF), aportePensionEmpleado(sueldoF), encontrarAporteFondoSolidaridadPensional(aporteFondoSolidaridadPensional(numeroDeMinimos(sueldoF))))));
 			//cout << cedula << nombre;
 			
@@ -381,9 +453,29 @@ int _tmain(int argc, _TCHAR* argv[])
 			salida = salida + to_string(pensionEmpresa) + ";" + to_string(fondo) + ";";
 			salida = salida + to_string(ilg) + ";" + to_string(ingrelabgravado) + ";";
 			salida = salida + to_string(uvts) + ";" + to_string(tarifaRetenFuente) + ";";
-			salida = salida + to_string(subTransporte) + ";" + to_string(salario) + "; \n";
+			salida = salida + to_string(retenenlafuente) + ";" + to_string(subTransporte);
+			salida = salida + ";" + to_string(salario) + "; \n";
 
-			/*
+			totalAportesSaludEmple = TotalSaludEmple(totalAportesSaludEmple,saludemple);//Proceso de acomulación total salud empleados
+			totalAportesSaludEmpre = TotalSaludEmpre(totalAportesSaludEmpre, saludEmpresa);//Proceso de acomulación total salud empleador
+			totalAportesPensionEmple = TotalPensionEmple(totalAportesPensionEmple, pensionemple);//Proceso de acomulación total pesion empleados
+			totalAportesPensionEmpre = TotalPensionEmpre(totalAportesPensionEmpre, pensionEmpresa);//Proceso de acomulación total pension de empleador
+			totalAportesFondoPension = TotalAporteFondoPension(totalAportesFondoPension, fondo); //Proceso de acomulación total aportefondosolidaridad
+			totalPagarDian = TotalRetenFuente(totalPagarDian, retenenlafuente); //Proceso de acomulación a pagar a la DIAN
+
+			//Comentamos todo este párrafo para la entrega final, ya cuando pase la etapa de pruebas
+			printf("%.2f\n", nomina);
+			printf("El numero de minimos es: %.2f\n", numSueldo);
+			printf("El subsidio de transporte es: %.2f\n", subTransporte);
+			printf("El Aporte a Salud del empleado es: %.2f\n", saludemple);
+			printf("El Aporte a Pension del empleado es: %.2f\n", pensionemple);
+			printf("El porcentaje de aporte al fondo de solidaridad pensional es: %.2f\n", aportefonsolipensio);
+			printf("El Aporte al fondo de solidaridad pensional es: %.2f\n", fondo);
+			printf("el ilg es : %.2f\n", ilg);
+			printf("La base en la retencion en la fuente es : %.2f\n", ingrelabgravado);
+			printf("La cantidad de uvts: %.2f\n", uvts);
+			printf("La retencion en la fuente es: %.2f\n", retenenlafuente);
+
 			numSueldo = 0.0;
 			saludemple = 0.0;
 			saludEmpresa = 0.0;
@@ -395,19 +487,6 @@ int _tmain(int argc, _TCHAR* argv[])
 			retenenlafuente = 0.0;
 			subTransporte = 0.0;
 			salario = 0.0;
-			*/
-
-			printf("%.2f\n", nomina);
-			printf("El numero de minimos es: %.2f\n", numSueldo);
-			printf("El subsidio de transporte es: %.2f\n", subTransporte);
-			printf("El Aporte a Salud del empleado es: %.2f\n", saludemple);
-			printf("El Aporte a Pension del empleado es: %.2f\n", pensionemple);
-			printf("El porcentaje de aporte al fondo de solidaridad pensional es: %.2f\n", aportefonsolipensio);
-			printf("El Aporte al fondo de solidaridad pensional es: %.2f\n", fondo);
-			printf("el ilg es : %.2f\n", ilg);
-			printf("La base en la retencion en la fuente es : %.2f\n", ingrelabgravado);
-			printf("La cantidad de uvts: %.2f\n", uvts);
-			printf("el porcentaje en la retencion en la fuente es: %.2f\n", retenenlafuente);
 		}
 	}
 	else{
@@ -418,6 +497,12 @@ int _tmain(int argc, _TCHAR* argv[])
 		creararchivo << salida;
 		creararchivo.close();
 		cout << "Se ha generado el archivo salidaarchivo.txt" << endl;
+		printf("El total Aporte a salud empleados es: %.2f\n", totalAportesSaludEmple);
+		printf("El total Aporte a salud empleador es: %.2f\n", totalAportesSaludEmpre);
+		printf("El total Aporte a pension empleados es: %.2f\n", totalAportesPensionEmple);
+		printf("El total Aporte a pension empleador es: %.2f\n", totalAportesPensionEmpre);
+		printf("El total Aporte a fondo de seguridad pensional es: %.2f\n", totalAportesFondoPension);
+		printf("El total a pagar a la DIAN es: %.2f\n", totalPagarDian);
 		system("pause");
 		return 0;
 	} catch (exception ex){}
