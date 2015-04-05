@@ -9,7 +9,6 @@
 #include <sstream> 
 
 using namespace std;
-
 float SUELDO_BASICO = 644350.00;			//sueldo basico para calculos (ejem: para encontrar numMinimos)
 float SUBSIDIO_TRANSPORTE = 74000.00;		//subsidio de transporte para calculos
 float APORTE_SALUD_EMPLEADO = 0.04;			//porcentaje de aporte a la salud por parte de los empleados (4%)
@@ -396,12 +395,57 @@ float TotalRetenFuente(float acomulador, float valor){
 	return resultado;
 }
 
+string aproximar(float valor){
+	int parte_entera,dosdecimales,tresdecimales,tercerdecimal;
+	float aux,aux2;
+	string res;
+	parte_entera = valor / 1;
+	dosdecimales = ((valor - parte_entera) *100);
+	tresdecimales = ((valor-parte_entera)*1000);
+	aux = ((valor - parte_entera)*100); //12.5
+	tercerdecimal = aux; //12
+	tercerdecimal = (aux - tercerdecimal) * 10;
+	if (tresdecimales>0){
+		if (tercerdecimal >= 5){
+			//dosdecimales = dosdecimales + 1;
+			if (dosdecimales >= 10){
+				res = to_string(parte_entera) + "." + to_string(dosdecimales + 1);
+			}
+			else
+			{   
+				//res = to_string(parte_entera) + ".0" + to_string(dosdecimales + 1);
+				if (dosdecimales < 9){
+					res = to_string(parte_entera) + ".0" + to_string(dosdecimales + 1);
+				}
+				else
+				{
+					res = to_string(parte_entera) + "." + to_string(dosdecimales + 1);
+				}
+			}
+		}
+		else
+		{
+			if (dosdecimales<10){
+				res = to_string(parte_entera) + ".0" + to_string(dosdecimales);
+			}
+			else
+			{
+				res = to_string(parte_entera) + "." + to_string(dosdecimales);
+			}
+		}
+	}
+	else
+	{
+		res = to_string(parte_entera) + ".00";
+	}
+	return res;
+}
+
 //Main principal
 int _tmain(int argc, _TCHAR* argv[])
 {
 	ifstream inFile; //Manejar archivos
 	inFile.open("nomina.txt"); //Archivo a abrir 
-	
 	float numSueldo = 0.0; //Numero de salarios mínimos mensuales actuales vigentes
 	float saludemple = 0.0; //Mondo dado por el empleado a salud
 	float saludEmpresa = 0.0; //Mondo subsidiado por el empleador a salud del empleado
@@ -447,14 +491,14 @@ int _tmain(int argc, _TCHAR* argv[])
 			//float uvt2(encontrarUvts(ingresoLaboralGravado(aporteSaludEmpleado(sueldoF), aportePensionEmpleado(sueldoF), encontrarAporteFondoSolidaridadPensional(aporteFondoSolidaridadPensional(numeroDeMinimos(sueldoF))))));
 			//cout << cedula << nombre;
 			
-			salida = salida + cedula + ";" + nombre + ";" + to_string(nomina) + ";";
-			salida = salida + to_string(numSueldo) + ";" + to_string(saludemple) + ";";
-			salida = salida + to_string(saludEmpresa) + ";" + to_string(pensionemple) + ";";
-			salida = salida + to_string(pensionEmpresa) + ";" + to_string(fondo) + ";";
-			salida = salida + to_string(ilg) + ";" + to_string(ingrelabgravado) + ";";
-			salida = salida + to_string(uvts) + ";" + to_string(tarifaRetenFuente) + ";";
-			salida = salida + to_string(retenenlafuente) + ";" + to_string(subTransporte);
-			salida = salida + ";" + to_string(salario) + "; \n";
+			salida = salida + cedula + ";" + nombre + ";" + sueldo; //aproximar(nomina) + ";" ;
+			salida = salida + aproximar(numSueldo) + ";" + aproximar(saludemple) + ";";
+			salida = salida + aproximar(saludEmpresa) + ";" + aproximar(pensionemple) + ";";
+			salida = salida + aproximar(pensionEmpresa) + ";" + aproximar(fondo) + ";";
+			salida = salida + aproximar(ilg) + ";" + aproximar(ingrelabgravado) + ";";
+			salida = salida + aproximar(uvts) + ";" + aproximar(tarifaRetenFuente*100) + ";";
+			salida = salida + aproximar(retenenlafuente) + ";" + aproximar(subTransporte);
+			salida = salida + ";" + aproximar(salario) +  "; \n";
 
 			totalAportesSaludEmple = TotalSaludEmple(totalAportesSaludEmple,saludemple);//Proceso de acomulación total salud empleados
 			totalAportesSaludEmpre = TotalSaludEmpre(totalAportesSaludEmpre, saludEmpresa);//Proceso de acomulación total salud empleador
