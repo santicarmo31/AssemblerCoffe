@@ -39,8 +39,6 @@ float PORCENTAJE_UVTS19 = 0.19;				//porcentaje para calculos en retencion en la
 float PORCENTAJE_UVTS28 = 0.28;				//porcentaje para calculos en retencion en la fuente (28%)
 float PORCENTAJE_UVTS33 = 0.33;				//porcentaje para calculos en retencion en la fuente (33%)
 float LIMPIAR_REGISTROS = 0.0;				//variable para limpiar registros
-//float nomina = 645000.00; 
-//float numSueldo;
 float ilg;
 float uvts;										
 float tarifaRetenFuente;					//Porcentaje UVTS
@@ -63,7 +61,7 @@ float aporteSaludEmpleado(float nomina){
 	__asm {
 		FLD dword ptr[nomina]; //Carga nomina al a posición(0) de la pila
 		FLD dword ptr[APORTE_SALUD_EMPLEADO]; //Carga APORTE_SALUD_EMPLEADO al a posición(1) de la pila
-		FMUL; //Multiplica los valores
+		FMUL; //Multiplica el salario inicial por el 0.04% de aporte a la salud del empleado
 		FSTP dword ptr[resultado]; //Almacena en resultado el valor de la ultima operacion realizada
 	}
 	return resultado;
@@ -158,7 +156,7 @@ float aporteFondoSolidaridadPensional(float numSueldo){
 		FLD dword ptr[numSueldo];
 		FCOMIP ST(0), ST(1);
 		JB esmenor20;
-		JA es20mas;
+		JA esmayor20;
 	nopaga:
 		FSTP dword ptr[resultado];
 		FLD dword ptr[LIMPIAR_REGISTROS];
@@ -183,7 +181,7 @@ float aporteFondoSolidaridadPensional(float numSueldo){
 		FSTP dword ptr[resultado];
 		FLD dword ptr[APORTE_FONDO_SOLIDARIDAD5];
 		JMP retorno;
-	es20mas:
+	esmayor20:
 		FSTP dword ptr[resultado];
 		FLD dword ptr[APORTE_FONDO_SOLIDARIDAD6];
 		JMP retorno;
@@ -194,9 +192,8 @@ float aporteFondoSolidaridadPensional(float numSueldo){
 }
 
 //Imprime detalles para encontrar el aporte al fondo de solidaridad pensional
-float encontrarAporteFondoSolidaridadPensional(float porcentaje,float nomina){
+float encontrarAporteFondoSolidaridadPensional(float porcentaje, float nomina){
 	float resultado = 0.00;
-	//cout << porcentaje << endl;
 	if (porcentaje > 0){
 		__asm {
 			FLD dword ptr[nomina];
@@ -209,7 +206,7 @@ float encontrarAporteFondoSolidaridadPensional(float porcentaje,float nomina){
 }
 
 //Encontrar el ILG en pesos para comparar con UVTS
-float ingresoLaboralGravado(float salud, float pension, float fondo,float nomina){
+float ingresoLaboralGravado(float salud, float pension, float fondo, float nomina){
 	float resultado = 0.00;
 	__asm {
 		FLD dword ptr[nomina];
@@ -219,7 +216,7 @@ float ingresoLaboralGravado(float salud, float pension, float fondo,float nomina
 		FSUB;
 		FLD dword ptr[fondo];
 		FSUB;
-		FST dword ptr[ilg]; // se almacena el ilg 
+		FST dword ptr[ilg]; //Se almacena el ilg 
 		FLD dword ptr[PORCENTAJE_ILG];
 		FMUL;
 		FSTP dword ptr[resultado];
@@ -228,7 +225,7 @@ float ingresoLaboralGravado(float salud, float pension, float fondo,float nomina
 		FSUB;
 		FSTP dword ptr[resultado];
 	}
-	return resultado; // es la base de la retencion en la fuente
+	return resultado; //Es la base de la retencion en la fuente
 }
 
 //Imprime detalles para encontrar los UVTs 
@@ -249,7 +246,7 @@ float encontrarRetencionEnLaFuente(float uvts, float BGP){
 	__asm{
 		FLD dword ptr[UVTS_95]; //Carga en la pila(0) el 95
 		FLD dword ptr[uvts]; //carga en la pila(1) el valor de uvts 
-		FCOMIP ST(0), ST(1); //compara 95 uvt  con  uvt 
+		FCOMIP ST(0), ST(1); //compara 95 uvts con uvts 
 		JB nopaga; //Si uvts es menor a 95 
 		FSTP dword ptr[resultado];
 		FLD dword ptr[UVTS_150]; //carga 150 uvt 
@@ -508,15 +505,15 @@ int _tmain(int argc, _TCHAR* argv[])
 			totalPagarDian = TotalRetenFuente(totalPagarDian, retenenlafuente); //Proceso de acomulación a pagar a la DIAN
 
 			//Comentamos todo este párrafo para la entrega final, ya cuando pase la etapa de pruebas
-			printf("%.2f\n", nomina);
+			printf("El sueldo a evular es: %.2f\n", nomina);
 			printf("El numero de minimos es: %.2f\n", numSueldo);
 			printf("El subsidio de transporte es: %.2f\n", subTransporte);
 			printf("El Aporte a Salud del empleado es: %.2f\n", saludemple);
 			printf("El Aporte a Pension del empleado es: %.2f\n", pensionemple);
 			printf("El porcentaje de aporte al fondo de solidaridad pensional es: %.2f\n", aportefonsolipensio);
 			printf("El Aporte al fondo de solidaridad pensional es: %.2f\n", fondo);
-			printf("el ilg es : %.2f\n", ilg);
-			printf("La base en la retencion en la fuente es : %.2f\n", ingrelabgravado);
+			printf("El ilg es: %.2f\n", ilg);
+			printf("La base en la retencion en la fuente es: %.2f\n", ingrelabgravado);
 			printf("La cantidad de uvts: %.2f\n", uvts);
 			printf("La retencion en la fuente es: %.2f\n", retenenlafuente);
 
@@ -537,10 +534,10 @@ int _tmain(int argc, _TCHAR* argv[])
 		cout << "Error abriendo el archivo nomina.txt" << endl;
 	}
 	try{
-		ofstream creararchivo("salidaarchivo.txt");
+		ofstream creararchivo("salidanomina.txt");
 		creararchivo << salida;
 		creararchivo.close();
-		cout << "Se ha generado el archivo salidaarchivo.txt" << endl;
+		cout << "Se ha generado el archivo salidanomina.txt" << endl;
 		printf("El total Aporte a salud empleados es: %.2f\n", totalAportesSaludEmple);
 		printf("El total Aporte a salud empleador es: %.2f\n", totalAportesSaludEmpre);
 		printf("El total Aporte a pension empleados es: %.2f\n", totalAportesPensionEmple);
