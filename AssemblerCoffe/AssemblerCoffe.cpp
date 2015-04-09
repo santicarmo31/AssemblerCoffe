@@ -220,10 +220,10 @@ float ingresoLaboralGravado(float salud, float pension, float fondo, float nomin
 		FLD dword ptr[PORCENTAJE_ILG];
 		FMUL;
 		FSTP dword ptr[resultado];
-		//FLD dword ptr[ilg];
-		//FLD dword ptr[resultado];
-		//FSUB;
-		//FSTP dword ptr[resultado];
+		FLD dword ptr[ilg];
+		FLD dword ptr[resultado];
+		FSUB;
+		FSTP dword ptr[resultado];
 	}
 	return resultado; //Es la base de la retencion en la fuente
 }
