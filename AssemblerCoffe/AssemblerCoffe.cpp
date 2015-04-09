@@ -505,7 +505,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			totalPagarDian = TotalRetenFuente(totalPagarDian, retenenlafuente); //Proceso de acomulación a pagar a la DIAN
 
 			//Comentamos todo este párrafo para la entrega final, ya cuando pase la etapa de pruebas
-			printf("El sueldo a evaluar es: %.2f\n", nomina);
+			printf("%.2f\n", nomina);
 			printf("El numero de minimos es: %.2f\n", numSueldo);
 			printf("El subsidio de transporte es: %.2f\n", subTransporte);
 			printf("El Aporte a Salud del empleado es: %.2f\n", saludemple);
