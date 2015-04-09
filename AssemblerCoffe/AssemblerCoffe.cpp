@@ -505,17 +505,17 @@ int _tmain(int argc, _TCHAR* argv[])
 			totalPagarDian = TotalRetenFuente(totalPagarDian, retenenlafuente); //Proceso de acomulación a pagar a la DIAN
 
 			//Comentamos todo este párrafo para la entrega final, ya cuando pase la etapa de pruebas
-			printf("%.2f\n", nomina);
-			printf("El numero de minimos es: %.2f\n", numSueldo);
-			printf("El subsidio de transporte es: %.2f\n", subTransporte);
-			printf("El Aporte a Salud del empleado es: %.2f\n", saludemple);
-			printf("El Aporte a Pension del empleado es: %.2f\n", pensionemple);
-			printf("El porcentaje de aporte al fondo de solidaridad pensional es: %.2f\n", aportefonsolipensio);
-			printf("El Aporte al fondo de solidaridad pensional es: %.2f\n", fondo);
-			printf("El ilg es: %.2f\n", ilg);
-			printf("La base en la retencion en la fuente es: %.2f\n", ingrelabgravado);
-			printf("La cantidad de uvts: %.2f\n", uvts);
-			printf("La retencion en la fuente es: %.2f\n", retenenlafuente);
+			//printf("%.2f\n", nomina);
+			//printf("El numero de minimos es: %.2f\n", numSueldo);
+			//printf("El subsidio de transporte es: %.2f\n", subTransporte);
+			//printf("El Aporte a Salud del empleado es: %.2f\n", saludemple);
+			//printf("El Aporte a Pension del empleado es: %.2f\n", pensionemple);
+			//printf("El porcentaje de aporte al fondo de solidaridad pensional es: %.2f\n", aportefonsolipensio);
+			//printf("El Aporte al fondo de solidaridad pensional es: %.2f\n", fondo);
+			//printf("El ilg es: %.2f\n", ilg);
+			//printf("La base en la retencion en la fuente es: %.2f\n", ingrelabgravado);
+			//printf("La cantidad de uvts: %.2f\n", uvts);
+			//printf("La retencion en la fuente es: %.2f\n", retenenlafuente);
 
 			numSueldo = 0.0;
 			saludemple = 0.0;
@@ -537,7 +537,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		ofstream creararchivo("salidanomina.txt");
 		creararchivo << salida;
 		creararchivo.close();
-		cout << "Se ha generado el archivo salidanomina.txt" << endl;
+		cout << "Se ha generado el archivo salidanomina.txt exitosamente" << endl;
 		printf("El total Aporte a salud empleados es: %.2f\n", totalAportesSaludEmple);
 		printf("El total Aporte a salud empleador es: %.2f\n", totalAportesSaludEmpre);
 		printf("El total Aporte a pension empleados es: %.2f\n", totalAportesPensionEmple);

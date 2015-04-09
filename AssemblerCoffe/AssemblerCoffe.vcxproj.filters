@@ -16,7 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
-    <Text Include="..\..\nomina.txt">
+    <Text Include="nomina.txt">
       <Filter>Resource Files</Filter>
     </Text>
   </ItemGroup>
